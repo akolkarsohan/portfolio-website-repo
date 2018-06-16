@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	  "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Portfolio | Serverless | AutoScaling-SQS</title>
+    <style type="text/css">
+      body { text-align: center; padding: 100px; }
+      h1 { font-size: 50px; }
+      body { font: 20px Helvetica, sans-serif; color: #333; }
+      #article { display: block; text-align: left; width: 750px; margin: 0 auto; }
+      a { color: #dc8100; text-decoration: none; }
+      a:hover { color: #333; text-decoration: none; }
+      #code {border: 1px solid black;width: 500px;height: 300px;overflow: scroll;}
+      p { color : blue;}
+      #objective p {color : purple; }
+
+    </style>
+
+  </head>
+  <body>
+    <div id="article">
+      <h1>Serverless Projects - AutoScaling Based Off SQS Message Queue Size</h1>
+     <div id="objective">
+	<p><b>Objective of Project:</b></p>
+	<p> Auto-scale the infrastructure through a combination of CloudWatch, SQS messages, and AWS’s Auto Scaling feature.</p>
+	<p><b>Approach:</b></p>
+	<p> First, we create an SQS queue, and then, through CloudWatch, set up an alarm to trigger every time we hit 40 messages in our queue.</p>
+	<p> When this alarm triggers, another instance is added.</p>
+	<p>Steps are as below:</p>
+    </div>
+     <div>
+	
+	<p>Configuring SQS:</p>
+
+	<p><img src="../images/SQS-creation.png" alt="SQS-creation.png"></p>	
+	
+	<p>Create one Amazon Linux EC2 instance of t2.micro size. We will use this instance to send messages to SQS. After the EC2 instance is created, type the below command to test if messages are sent correctly to SQS. </p>
+	
+	<p><img src="../images/1-SQS-send-message-cli.png" alt="1-SQS-send-message-cli.png"></p>
+
+	<p>Configuring Launch Configuaration and AutoScaling Group:</p><br>
+	
+	<p><img src="../images/2-SQS-AutoScaling-Group-1.png" alt="2-SQS-AutoScaling-Group-1.png"></p><br>
+
+	<p><img src="../images/3-SQS-AutoScaling-Group-2.png" alt="3-SQS-AutoScaling-Group-2.png"></p><br>
+
+	<p>Creating CloudWatch Alarm:</p>
+
+	<p><img src="../images/5-SQS-CloudWatch-Alarm-1.png" alt="5-SQS-CloudWatch-Alarm-1.png"></p><br>
+
+	<p>Set up CloudWatch Alarm such that, an instance is created above threshold value of 40 messages</p>
+
+	<p><img src="../images/6-SQS-CloudWatch-Alarm-2.png" alt="6-SQS-CloudWatch-Alarm-2.png"></p><br>
+
+	<p>Now that Cloudwatch Alarm is created, run the below script to send 60 messages to SQS (message count greater than our threshold set as 40).<p/>
+
+	<p><img src="../images/7-SQS-bulk-mesage-send-script.png" alt="7-SQS-bulk-mesage-send-script.png"></p><br>
+
+	<p>Verify messages received by SQS service.</p>
+
+	<p><img src="../images/8-SQS-Increased-message-count.png" alt="8-SQS-Increased-message-count.png"></p><br>
+
+	<p>After some time, autoscaling will recognize that one instance can't handle more than 40 messages, and it will start creating new instances.</p>
+
+	<p><img src="../images/4-Autoscaled-EC2-instances.png" alt="4-Autoscaled-EC2-instances.png"></p><br>
+
+	<p>Now using AWS console, poll the messages. Delete some messages so that the total message count is below 40.</p>
+
+	<p><img src="../images/9-SQS-polling-messages.png" alt="9-SQS-polling-messages.png"></p><br>
+
+	<p><img src="../images/10-SQS-Decreased-message-count.png" alt="10-SQS-Decreased-message-count.png"></p><br>
+
+	<p>Autoscaling policy for decreasing instance count will kick off and it will start deleting instance untill there is only one remaining. </p>
+
+	<p><img src="../images/11-SQS-AutoSacling-termination.png" alt="11-SQS-AutoSacling-termination.png"></p><br>
+
+      </div>
+     </div>
+    
+  </body>
+  </html>

@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	  "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Portfolio | AWS Main Page</title>
+    <style type="text/css">
+      body { text-align: center; padding: 150px; }
+      h1 { font-size: 50px; }
+      body { font: 20px Helvetica, sans-serif; color: #333; }
+      #article { display: block; text-align: left; width: 650px; margin: 0 auto; }
+      a { color: #dc8100; text-decoration: none; }
+      a:hover { color: #333; text-decoration: none; }
+      #code {border: 1px solid black;width: 700px;height: 500px;overflow: scroll;}
+    </style>
+
+  </head>
+  <body>
+    <div id="article">
+
+      <h2>CloudFormation Projects</h2>
+      <h2>Serverless Projects</h2>
+      <div>
+	<ul>
+	  <li><a href="http://ilovecoffee.akolkarsohan.com/">ILOVECOFFEE - Serverless Website</a></li><br>
+	  <li>AWS Lambda - Starting EC2 Instances and send SNS notification</li><br>
+	    <div id=code>
+		<pre>
+############################################################################
+# Purpose: This Lambda function fulfills following steps:                  #
+#          1) Start given instances at 9 am IST using CloudWatch trigger   #
+#          2) Sends Public IP of the instance to SNS subscribers via email #
+# Author: Sohan Akolkar                                                    #
+# History: Concept envisioned and implemented in Jun 2017                  #
+# Project : Used for development EC2 instances                             #
+############################################################################
+
+import boto3
+import json
+
+# instance_id and region declaration
+instance_id = 'i-097111111111111'
+region = 'us-east-1'
+
+
+
+def lambda_handler(event, context):
+    
+    # Start given instances
+    ec2 = boto3.client('ec2', region_name=region)
+    ec2.start_instances(InstanceIds=[instance_id])
+   
+    # Get Public IP of the instances
+    ec2_describe = boto3.client('ec2')
+    instances = ec2_describe.describe_instances(InstanceIds=[instance_id])
+    get_public_ip = instances['Reservations'][0]['Instances'][0]['PublicIpAddress']
+       
+        
+    
+
+    # Public SNS message with topic
+    sns = boto3.client(service_name="sns")
+    topicArn = 'arn:aws:sns:us-east-1:accountNumber:Test-SNS-Topic'
+    sns.publish(
+        TopicArn = topicArn,
+        Message = "Public IP Address of EC2 instance is : " + str(get_public_ip)
+    )
+    return
+    
+		</pre>
+	    </div><br>
+	<li><a href="autoscaling-sqs-sns.html">AutoScaling Based Off SQS Message Queue Size</li>
+	</ul>
+      </div>
+     </div>
+    
+  </body>
+  </html>

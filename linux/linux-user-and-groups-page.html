@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Portfolio | Linux Projects | User and Groups Management Page</title>
+    <style type="text/css">
+      body { text-align: center; padding: 150px; }
+      h1 { font-size: 50px; }
+      body { font: 20px Helvetica, sans-serif; color: #333; }
+      #article { display: block; text-align: left; width: 650px; margin: 0 auto; }
+      a { color: #dc8100; text-decoration: none; }
+      a:hover { color: #333; text-decoration: none; }
+      #code {border: 1px solid black;width: 500px;height: 300px;overflow: scroll;}
+      .tg  {border-collapse:collapse;border-spacing:0;}
+      .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+      .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+      .tg .tg-f8uf{font-size:100%;font-family:Arial, Helvetica, sans-serif !important;;vertical-align:top}
+      .tg .tg-h31u{font-family:Arial, Helvetica, sans-serif !important;;vertical-align:top}
+      .tg .tg-yw4l{vertical-align:top}
+    </style>
+
+  </head>
+  <body>
+
+	<script>
+	  var x = 0;
+	  function myFunction() {
+    		document.getElementById("demo").innerHTML;
+	  }	
+	</script>
+
+      <div id="article">
+      <h1>Linux Projects - User and Group Management Project</h1>
+      <div>
+        <ul>
+	    
+	<p><b>Objective of Project:</b></p>
+        <p>Set up way to provide admins and developers privileges to perform their activities.</p>
+        <p><b>Approach:</b></p>
+        <p> Create 2 groups, "admin" group for admins and "dev" group for developers. The structure is as follows: </p>
+        
+	<table class="tg">
+  <tr>
+    <th class="tg-h31u"><span style="font-weight:bold">Admin Group</span></th>
+    <th class="tg-h31u"><span style="font-weight:bold">Dev Group</span></th>
+    <th class="tg-yw4l"><span style="font-weight:bold">Wheel Group</span></th>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">admin1</td>
+    <td class="tg-yw4l">dev1</td>
+    <td class="tg-yw4l">admin1</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">admin2</td>
+    <td class="tg-yw4l">dev2</td>
+    <td class="tg-yw4l">admin2</td>
+  </tr>
+</table>	
+
+	<p>Steps are as below:</p>		
+	<h4>Create admin1 user</h4>
+	<div id="bashcode" onscroll="myFunction()">
+	<pre>
+[root@localhost vagrant]# useradd admin1
+[root@localhost vagrant]# passwd admin1 
+Changing password for user admin1.
+New password:
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+[root@localhost vagrant]# id admin1
+uid=1002(admin1) gid=1003(admin1) groups=1003(admin1)
+	</pre>
+	<h4>Create admin group and admin1 user to it</h4>
+	<pre>
+[root@localhost vagrant]# groupadd admin
+[root@localhost vagrant]# usermod -aG admin admin1
+[root@localhost vagrant]# id admin1
+uid=1002(admin1) gid=1003(admin1) groups=1003(admin1),1004(admin)
+	</pre>
+	<h4>Provide admin1 user with sudo previlege </h4>
+	<pre>
+
+[root@localhost vagrant]# usermod -aG wheel admin1
+[root@localhost vagrant]# id admin1
+uid=1002(admin1) gid=1003(admin1) groups=1003(admin1),10(wheel),1004(admin)
+[root@localhost vagrant]# exit
+exit
+[vagrant@localhost ~]$ su - admin1
+Password: 
+Last login: Tue May  1 17:16:25 UTC 2018 on pts/0
+[admin1@localhost ~]$ sudo yum update -y
+Loaded plugins: fastestmirror
+base                                             | 3.6 kB     00:00     
+extras                                           | 3.4 kB     00:00     
+updates                                          | 3.4 kB     00:00     
+Loading mirror speeds from cached hostfile
+ * base: centos.mirror.net.in
+ * extras: centos.excellmedia.net
+ * updates: centos.excellmedia.net
+No packages marked for update
+	</pre>
+	<h4>Create admin2 user and add it to 'admin' and 'wheel' groups</h4> 
+	<pre>
+[root@localhost vagrant]# useradd admin2
+[root@localhost vagrant]# id admin2
+uid=1003(admin2) gid=1005(admin2) groups=1005(admin2)
+[root@localhost vagrant]# usermod -aG wheel,admin admin2
+[root@localhost vagrant]# id admin2
+uid=1003(admin2) gid=1005(admin2) groups=1005(admin2),10(wheel),1004(admin)
+	</pre>
+
+	<h4>Verify if admin1 and admin2 are added to admin group</h4>
+	<pre>
+[root@localhost vagrant]# getent group admin
+admin:x:1004:admin1,admin2
+	</pre>
+
+	<h4>Add users dev1 and dev2, add group 'dev', and add users to 'dev' group</h4>
+	<pre>
+[root@localhost vagrant]# for dev in dev1 dev2; do useradd $dev; done
+[root@localhost vagrant]# id dev1
+uid=1004(dev1) gid=1006(dev1) groups=1006(dev1)
+[root@localhost vagrant]# id dev2
+uid=1005(dev2) gid=1007(dev2) groups=1007(dev2)
+
+[root@localhost vagrant]# for i in dev1 dev2; do usermod -aG dev $i; done
+[root@localhost vagrant]# id dev1
+uid=1004(dev1) gid=1006(dev1) groups=1006(dev1),1008(dev)
+[root@localhost vagrant]# id dev2
+uid=1005(dev2) gid=1007(dev2) groups=1007(dev2),1008(dev)
+
+[root@localhost vagrant]# getent group dev
+dev:x:1008:dev1,dev2
+
+	</pre>
+
+	    </div>
+        </ul>
+      </div>
+     </div>
+
+  </body>
+  </html>

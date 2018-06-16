@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Portfolio | Linux Bash Scripts Page</title>
+    <style type="text/css">
+      body { text-align: center; padding: 150px; }
+      h1 { font-size: 50px; }
+      body { font: 20px Helvetica, sans-serif; color: #333; }
+      #article { display: block; text-align: left; width: 650px; margin: 0 auto; }
+      a { color: #dc8100; text-decoration: none; }
+      a:hover { color: #333; text-decoration: none; }
+      #bashcode {border: 1px solid black;width: 500px;height: 300px;overflow: scroll;}
+    </style>
+
+  </head>
+  <body>
+
+	<script>
+	  var x = 0;
+	  function myFunction() {
+    		document.getElementById("demo").innerHTML;
+	  }	
+	</script>
+
+      <div id="article">
+      <h1>Linux Projects - Bash Scripts</h1>
+      <div>
+        <ul>
+          <li>Stop AWS instances in all region</li><br>
+	    <div id="bashcode" onscroll="myFunction()">
+		<pre>
+#!/bin/bash
+  
+profile=$1
+for region in `aws ec2 describe-regions --output text --profile $profile  | cut -f3`
+do
+        aws_list_instances="aws ec2 describe-instances --query  "Reservations[].Instances[].[Placement.AvailabilityZone,State.Name,InstanceId,NetworkInterfaces[0].Association.PublicIp,KeyName,Tags[0].Value]" --output table --profile $1"
+        get_running_instances=$($aws_list_instances --region "$region" --profile $profile | grep running | awk '{print $5}')
+
+        aws ec2 stop-instances --instance-id $get_running_instances --profile $profile --region $region
+        echo -e "\nStopping Instances in region: '$region'..."
+        $aws_list_instances --profile $1 --region $region
+done
+		</pre>
+	    </div>
+        </ul>
+      </div>
+     </div>
+
+  </body>
+  </html>

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	  "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Portfolio | DevOps | ElasticSearch</title>
+    <style type="text/css">
+      body { text-align: center; padding: 100px; }
+      h1 { font-size: 50px; }
+      body { font: 20px Helvetica, sans-serif; color: #333; }
+      #article { display: block; text-align: left; width: 750px; margin: 0 auto; }
+      a { color: #dc8100; text-decoration: none; }
+      a:hover { color: #333; text-decoration: none; }
+      #code {border: 1px solid black;width: 1000px;height: 300px;overflow: scroll; color : black;}
+      p { color : blue;}
+      #objective p {color : purple;}	
+      img{ width:1200px; height: 500px; }
+
+    </style>
+
+  </head>
+  <body>
+    <div id="article">
+      <h1>Searching movie database using ElasticSearch</h1>
+     <div id="objective">
+	<p><b>Objective of Project:</b></p>
+	<p>Import movie database into ElasticSearch and then search it.</p>
+	<p><b>Approach:</b></p>
+	<ul>
+		<li>Create domain for ElastcSearch and Kibana plugin</li>
+		<li>Create JSON file with the movie database</li>
+		<li>Upload the JSON data to ElasticSearch</li>
+		<li>Search the data using Kibana plugin</li>
+	</ul>
+
+    </div>
+     <div>
+
+	<p>Steps to be followed:</p>	
+	
+	<p>Create domain for ElastcSearch and Kibana plugin.</p><br/>
+
+	<p><img style="width:1300px; height:200px" src="../../images/elasticsearch/1-createdomain.png" alt="1-createdomain.png"></p><br/>	
+	
+	<p>Type in domain name, keep version as default.</p><br/>
+	
+	<p><img src="../../images/elasticsearch/2-elastcsearch-domain.png" alt="2-elastcsearch-domain.png"></p><br/>
+	
+	<p>Configure domain with one t2.small instance (comes in free tier)</p><br/>
+	
+	<p><img src="../../images/elasticsearch/3-configure-clsuter.png" alt="3-configure-clsuter.png"></p><br>
+
+	<p>Configure network by selecting Public Access</p><br/>
+
+	<p><img src="../../images/elasticsearch/4-network-config.png" alt="4-network-config.png"></p><br//>
+
+	<p>Select 'Allow access to the domain from specific IP(s)'. You can find your IP by going to https://www.whatismyip.com/. Optionally if you use Linux/MacOS, type 'dig +short myip.opendns.com @resolver1.opendns.com' in the terminal</p><br/>
+
+	<p><img src="../../images/elasticsearch/5-access-policy.png" alt="5-access-policy.png"></p><br>
+
+	<p><img src="../../images/elasticsearch/6-save-IP.png" alt="6-save-IP.png"></p><br>
+
+	<p>After entering IP, click on Create. After about 10 minutes, your domain will be available</p><br/>
+
+	<p><img src="../../images/elasticsearch/7-creation-successful.png" alt="7-creation-successful.png"> </p><br>
+
+	<p>Create JSON file with the movie data</p><br/>
+
+	<p id=code>
+{ "index" : { "_index": "movies", "_type" : "movie", "_id" : "2" } }
+{"director": "Frankenheimer, John", "genre": ["Drama", "Mystery", "Thriller"], "year": 1962, "actor": ["Lansbury, Angela", "Sinatra, Frank", "Leigh, Janet", "Harvey, Laurence", "Silva, Henry", "Frees, Paul", "Gregory, James", "Bissell, Whit", "McGiver, John", "Parrish, Leslie", "Edwards, James", "Flowers, Bess", "Dhiegh, Khigh", "Payne, Julie", "Kleeb, Helen", "Gray, Joe", "Nalder, Reggie", "Stevens, Bert", "Masters, Michael", "Lowell, Tom"], "title": "The Manchurian Candidate"}
+
+{ "index" : { "_index": "movies", "_type" : "movie", "_id" : "3" } }
+{"director": "Baird, Stuart", "genre": ["Action", "Crime", "Thriller"], "year": 1998, "actor": ["Downey Jr., Robert", "Jones, Tommy Lee", "Snipes, Wesley", "Pantoliano, Joe", "Jacob, Ir\u00e8ne", "Nelligan, Kate", "Roebuck, Daniel", "Malahide, Patrick", "Richardson, LaTanya", "Wood, Tom", "Kosik, Thomas", "Stellate, Nick", "Minkoff, Robert", "Brown, Spitfire", "Foster, Reese", "Spielbauer, Bruce", "Mukherji, Kevin", "Cray, Ed", "Fordham, David", "Jett, Charlie"], "title": "U.S. Marshals"}
+
+{ "index" : { "_index": "movies", "_type" : "movie", "_id" : "4" } }
+{"director": "Ray, Nicholas", "genre": ["Drama", "Romance"], "year": 1955, "actor": ["Hopper, Dennis", "Wood, Natalie", "Dean, James", "Mineo, Sal", "Backus, Jim", "Platt, Edward", "Ray, Nicholas", "Hopper, William", "Allen, Corey", "Birch, Paul", "Hudson, Rochelle", "Doran, Ann", "Hicks, Chuck", "Leigh, Nelson", "Williams, Robert", "Wessel, Dick", "Bryar, Paul", "Sessions, Almira", "McMahon, David", "Peters Jr., House"], "title": "Rebel Without a Cause"}
+	</p>
+	
+	<p>Upload JSON data to elasticsearch domain</p><br/>
+
+	<p id="code">
+curl -XPOST https://search-movies-foyril6pupmh2frjgfzdxei52a.us-east-1.es.amazonaws.com/_bulk --data-binary @bulk_movies.json -H 'Content-Type: application/json’
+	</p>
+
+	<p>From AWS ElasticSearch console, click on Kibana URL. Then click on Create Index</p><br/>
+	
+	<p><img src="../../images/elasticsearch/8-kibana-create-index.png" alt="8-kibana-create-index.png"></p><br>
+
+	<p>Configure the index with the pattern avilable</p><br/>
+
+	<p><img src="../../images/elasticsearch/9-kibana-create-index-step2.png" alt="9-kibana-create-index-step2.png"></p><br>
+
+	<p>After the index is prepared, click on Discover on left panel. You can search any string desired</p><br/>
+
+	<p><img src="../../images/elasticsearch/9-kibana-discover.png" alt="9-kibana-discover.png"></p><br>
+
+
+      </div>
+     </div>
+    
+  </body>
+  </html>
